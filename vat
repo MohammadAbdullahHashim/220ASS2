@@ -1,0 +1,25 @@
+class VAT:
+    """Represents VAT calculation for the e-bookstore."""
+
+    def __init__(self, vat_rate=0.08):
+        """Initialize with a default VAT rate of 8% (0.08)."""
+        self.__vat_rate = vat_rate
+
+    def get_vat_rate(self):
+        """Returns the current VAT rate."""
+        return self.__vat_rate
+
+    def set_vat_rate(self, vat_rate):
+        """Sets a new VAT rate."""
+        self.__vat_rate = vat_rate
+
+    def calculate_vat(self, amount):
+        """Calculates the VAT for a given amount."""
+        return amount * self.__vat_rate
+
+    def calculate_total_with_vat(self, amount):
+        """Calculates the total amount including VAT."""
+        return amount + self.calculate_vat(amount)
+
+    def __str__(self):
+        return f"VAT Rate: {self.__vat_rate * 100}%"
