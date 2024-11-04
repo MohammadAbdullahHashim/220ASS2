@@ -1,0 +1,112 @@
+from ebook import Ebook
+from customer import Customer
+from shopping_cart import ShoppingCart
+from order import Order
+from payment import Payment
+from discount import Discount
+from loyalty_discount import LoyaltyDiscount
+from bank_account import BankAccount
+from vat import VAT
+
+def test_ebook_catalog():
+    """Test adding, modifying, and removing an e-book in the catalog."""
+    print("\n=== Test: E-book Catalog ===")
+    ebook1 = Ebook("Python Basics", "Alice Smith", "2022-01-10", "Programming", 25.99)
+    ebook2 = Ebook("Data Science Essentials", "John Doe", "2021-08-20", "Data Science", 35.50)
+
+    # Modify the e-book
+    ebook1.set_price(20.99)
+    print(ebook1)  # Output modified e-book details
+
+    # Add new e-book to the catalog
+    print(ebook2)  # Display second e-book
+
+def test_customer_account():
+    """Test adding, modifying, and viewing customer accounts."""
+    print("\n=== Test: Customer Account ===")
+    customer = Customer("Bob Johnson", "bob@example.com")
+
+    # Modify customer contact info
+    customer.set_contact_info("bob.johnson@newemail.com")
+    print(customer)
+
+    # Add bank account to customer
+    account = BankAccount("1234567890", "Bank of Python", 1000.0)
+    customer.add_account(account)
+    print("Bank Accounts:", [str(acc) for acc in customer.get_accounts()])
+
+def test_shopping_cart():
+    """Test adding and removing e-books in the shopping cart."""
+    print("\n=== Test: Shopping Cart ===")
+    customer = Customer("Eve Adams", "eve@example.com")
+    ebook1 = Ebook("Python Basics", "Alice Smith", "2022-01-10", "Programming", 25.99)
+    ebook2 = Ebook("Data Science Essentials", "John Doe", "2021-08-20", "Data Science", 35.50)
+
+    # Add e-books to shopping cart
+    customer._shopping_cart.add_ebook(ebook1)
+    customer._shopping_cart.add_ebook(ebook2)
+    print(customer._shopping_cart)
+
+    # Remove an e-book from the shopping cart
+    customer._shopping_cart.remove_ebook(ebook1)
+    print("After removing an e-book:", customer._shopping_cart)
+
+
+def test_apply_discounts():
+    """Test applying a loyalty discount and a bulk discount for eligible orders."""
+    print("\n=== Test: Applying Discounts ===")
+
+
+    ebook1 = Ebook("Python Basics", "Mohammad Abdullah", "2022-01-10", "Programming", 25.99)
+    ebook2 = Ebook("Advanced Python", "Ahmed Waleed", "2023-05-15", "Programming", 29.99)
+    ebook3 = Ebook("Data Science Essentials", "Alia Ibrahim", "2021-08-20", "Data Science", 35.50)
+    ebook4 = Ebook("AI Basics", "Maryam Saif", "2020-03-12", "Artificial Intelligence", 40.00)
+    ebook5 = Ebook("Machine Learning", "Sujith Mathew", "2021-11-22", "Machine Learning", 45.00)
+    ebooks = [ebook1, ebook2, ebook3, ebook4, ebook5]
+
+
+    order = Order("2024-11-11", ebooks)
+    print("Order with Bulk Discount Applied:")
+    print(order)  # This should show the bulk discount (20%) applied automatically
+
+
+    loyalty_discount = LoyaltyDiscount(0.10, 100)  # 10% loyalty discount for members with 100 points
+    order.set_loyalty_discount(loyalty_discount)
+    print("\nOrder with Bulk and Loyalty Discount Applied:")
+    print(order)  # This should show both discounts applied to the final total
+
+
+def test_payment_invoice():
+    """Test generating an invoice with payment processing, including discounts and VAT."""
+    print("\n=== Test: Payment and Invoice Generation ===")
+
+    # Create five e-books to trigger bulk discount
+    ebook1 = Ebook("Python Basics", "Mohammad Abdullah", "2022-01-10", "Programming", 25.99)
+    ebook2 = Ebook("Advanced Python", "Ahmed Waleed", "2023-05-15", "Programming", 29.99)
+    ebook3 = Ebook("Data Science Essentials", "Alia Ibrahim", "2021-08-20", "Data Science", 35.50)
+    ebook4 = Ebook("AI Basics", "Maryam Saif", "2020-03-12", "Artificial Intelligence", 40.00)
+    ebook5 = Ebook("Machine Learning", "Sujith Mathew", "2021-11-22", "Machine Learning", 45.00)
+    ebooks = [ebook1, ebook2, ebook3, ebook4, ebook5]
+
+    # Create order and apply bulk discount automatically
+    order = Order("2024-11-11", ebooks)
+    discount = Discount(0.20)  # Apply an additional 20% general discount
+    order.set_discount(discount)  # This should now work without errors
+    print("Order with Bulk and Additional Discount Applied:", order)
+
+    # Process payment with VAT included
+    vat = VAT(0.08)
+    total_with_vat = vat.calculate_total_with_vat(order.get_total_with_vat())
+    payment = Payment(order.get_order_date(), ebooks, total_with_vat,
+                      discount.calculate_discount(order.get_total_with_vat()))
+    payment.process_payment()
+    print("Payment Invoice:", payment)  # Should show total with discounts and VAT
+
+
+if __name__ == "__main__":
+    # Run all test cases
+    test_ebook_catalog()
+    test_customer_account()
+    test_shopping_cart()
+    test_apply_discounts()
+    test_payment_invoice()
