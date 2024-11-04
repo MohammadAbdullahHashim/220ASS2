@@ -1,0 +1,19 @@
+from ebook import Ebook
+
+class ShoppingCart:
+    """Represents a shopping cart for a customer."""
+
+    def __init__(self):
+        self.__ebooks = []
+
+    def add_ebook(self, ebook):
+        self.__ebooks.append(ebook)
+
+    def remove_ebook(self, ebook):
+        self.__ebooks.remove(ebook)
+
+    def calculate_total(self):
+        return sum(ebook.get_price() for ebook in self.__ebooks)
+
+    def __str__(self):
+        return "Shopping Cart: " + ", ".join([str(ebook) for ebook in self.__ebooks])
