@@ -1,0 +1,61 @@
+from ebook import Ebook
+from vat import VAT
+from discount import Discount
+from loyalty_discount import LoyaltyDiscount
+
+class Order:
+    """Represents an order placed by a customer, with support for discounts and VAT."""
+
+    def __init__(self, order_date, ebooks):
+        self.__order_date = order_date
+        self.__ebooks = ebooks
+        self.__total_amount = sum(ebook.get_price() for ebook in ebooks)
+        self.__discount = 0.0
+        self.__vat = VAT()
+        self.__loyalty_discount = None
+        self.__bulk_discount_applied = False
+
+        # Check for bulk discount eligibility
+        if len(ebooks) >= 5:
+            self.apply_bulk_discount()
+
+    def get_order_date(self):
+        return self.__order_date
+
+    def set_discount(self, discount):
+        """Applies a general discount to the order if provided."""
+        if isinstance(discount, Discount):
+            discount_amount = discount.calculate_discount(self.__total_amount)
+            self.__discount += discount_amount
+            self.__total_amount -= discount_amount
+        else:
+            print("Invalid discount type provided.")
+
+    def apply_bulk_discount(self):
+        """Applies a 20% bulk discount if 5 or more e-books are in the order."""
+        bulk_discount = 0.20  # 20% bulk discount
+        self.__discount += self.__total_amount * bulk_discount
+        self.__total_amount -= self.__total_amount * bulk_discount
+        self.__bulk_discount_applied = True
+
+    def set_loyalty_discount(self, loyalty_discount):
+        """Applies a loyalty discount if the customer qualifies."""
+        if isinstance(loyalty_discount, LoyaltyDiscount):
+            discount_amount = loyalty_discount.calculate_discount(self.__total_amount)
+            self.__discount += discount_amount
+            self.__total_amount -= discount_amount
+            assert isinstance(loyalty_discount, object)
+            self.__loyalty_discount = loyalty_discount
+
+    def get_total_with_vat(self):
+        """Returns the total amount including VAT."""
+        return self.__vat.calculate_total_with_vat(self.__total_amount)
+
+    def __str__(self):
+        ebooks_str = ", ".join([ebook.get_title() for ebook in self.__ebooks])
+        discount_info = "Bulk Discount Applied" if self.__bulk_discount_applied else "No Bulk Discount"
+        loyalty_info = f"Loyalty Discount: {self.__loyalty_discount}" if self.__loyalty_discount else "No Loyalty Discount"
+        return (f"Order Date: {self.__order_date}\nEbooks: [{ebooks_str}]\n"
+                f"Subtotal after discounts: ${self.__total_amount}\n{discount_info}\n{loyalty_info}\n"
+                f"Total with VAT: ${self.get_total_with_vat()}")
+
