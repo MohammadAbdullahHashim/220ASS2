@@ -1,0 +1,13 @@
+class Discount:
+    """Represents a generic discount."""
+
+    def __init__(self, discount_rate):
+        self.__discount_rate = discount_rate
+
+    def calculate_discount(self, total_amount):
+        """Calculates the discount based on the given rate."""
+        return total_amount * self.__discount_rate
+
+
+    def __str__(self):
+        return f"Discount: {self.__discount_rate * 100}%"
